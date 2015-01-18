@@ -16,8 +16,11 @@
 
 package com.antonioleiva.materialeverywhere;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.graphics.Palette;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +33,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import supremez2.zwskin.diamondinc.com.supremezdashboard.R;
@@ -88,7 +92,7 @@ public class HomeActivity extends BaseActivity {
 
 
         @Override public int getCount() {
-            return 38;
+            return 20;
         }
 
         @Override public Object getItem(int i) {
@@ -99,52 +103,66 @@ public class HomeActivity extends BaseActivity {
             return i;
         }
 
-        @Override public View getView(int i, View view, ViewGroup viewGroup) {
+        @Override public View getView(int i, View convertView, ViewGroup viewGroup) {
 
-            if (view == null) {
-                view = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.grid_item, viewGroup, false);
+
+            final ViewHolder viewHolder;
+
+            if (convertView == null) {
+
+                convertView = LayoutInflater.from(viewGroup.getContext()).inflate(
+                    R.layout.grid_item, viewGroup, false);
+
+                viewHolder = new ViewHolder();
+                viewHolder.image = (ImageView) convertView.findViewById(R.id.image);
+                viewHolder.view = convertView.findViewById(R.id.view);
+                viewHolder.text = (TextView) convertView.findViewById(R.id.textpalette);
+
+                convertView.setTag(viewHolder);
+
+            } else {
+
+                viewHolder = (ViewHolder) convertView.getTag();
             }
 
             final String imageUrl = "http://tbremer.pf-control.de/walls/" + String.valueOf(i + 1) + ".png";
-            view.setTag(imageUrl);
-            final ImageView image = (ImageView) view.findViewById(R.id.image);
+//            convertView.setTag(imageUrl);
+
+            viewHolder.text.setText(getItem(i).toString());
 
 
+            Picasso.with(convertView.getContext())
+                .load(imageUrl)
+                .fit().centerCrop()
+                .into(viewHolder.image, new Callback.EmptyCallback() {
+                    @Override public void onSuccess() {
+                        final Bitmap bitmap = ((BitmapDrawable) viewHolder.image.getDrawable()).getBitmap();// Ew!
+                        Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
+                            public void onGenerated(Palette palette) {
 
-            Picasso.with(view.getContext())
-                    .load(imageUrl)
-                   // .fit()
-                   // .centerCrop()
-                   // .transform(PaletteTransformation.instance())
-                    .into(image);//, new Callback.EmptyCallback() {
+                                if (palette != null) {
 
-                       // @Override
-                       // public void onSuccess() {
-                       //     ImageView imageView = (ImageView) findViewById(R.id.imageView7);
+                                    Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
 
-                       //     Bitmap bitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
-                       //     Palette palette = PaletteTransformation.getPalette(bitmap);
+                                    if (vibrantSwatch != null) {
+                                        viewHolder.view.setBackgroundColor(vibrantSwatch.getRgb());
+                                        viewHolder.text.setTextColor(vibrantSwatch.getTitleTextColor());
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
 
-                       //     PaletteLoader.with(image.getContext(), imageUrl)
-                       //             .load(palette)
-                       //             .setPaletteRequest(new PaletteRequest(
-                       //                    PaletteRequest.SwatchType.REGULAR_VIBRANT,
-                       //                    PaletteRequest.SwatchColor.BACKGROUND))
-                       //             .into(imageView.findViewById(R.id.imageView7)); //This was in your Palette example, but won't it change the background of the GridView? You can choose any view you want here to apply the color to.
-
-                        //}
-                    //});
-
-            TextView text = (TextView) view.findViewById(R.id.textpalette);
-            text.setText(getItem(i).toString());
-
-
-
-            return view;
+            return convertView;
         }
     }
 
+    static class ViewHolder {
+        ImageView image;
+        TextView text;
+        View view;
+    }
 
 
 
