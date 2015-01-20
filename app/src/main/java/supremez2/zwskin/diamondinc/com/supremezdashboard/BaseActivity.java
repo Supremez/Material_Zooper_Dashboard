@@ -89,10 +89,6 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     }
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
 
     public void wallpaper(View view) {
       Intent intent = new Intent(this, com.antonioleiva.materialeverywhere.HomeActivity.class);
