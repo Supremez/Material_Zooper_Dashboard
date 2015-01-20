@@ -92,7 +92,11 @@ public class HomeActivity extends BaseActivity {
 
 
         @Override public int getCount() {
+<<<<<<< HEAD
             return 43;
+=======
+            return 38;
+>>>>>>> master
         }
 
         @Override public Object getItem(int i) {
@@ -107,6 +111,7 @@ public class HomeActivity extends BaseActivity {
 
 
             final ViewHolder viewHolder;
+<<<<<<< HEAD
 
             if (convertView == null) {
 
@@ -129,8 +134,22 @@ public class HomeActivity extends BaseActivity {
 //            convertView.setTag(imageUrl);
 
             viewHolder.text.setText(getItem(i).toString());
+=======
 
+            if (convertView == null) {
 
+                convertView = LayoutInflater.from(viewGroup.getContext()).inflate(
+                    R.layout.grid_item, viewGroup, false);
+
+                viewHolder = new ViewHolder();
+                viewHolder.image = (ImageView) convertView.findViewById(R.id.image);
+                viewHolder.view = convertView.findViewById(R.id.view);
+                viewHolder.text = (TextView) convertView.findViewById(R.id.textpalette);
+>>>>>>> master
+
+                convertView.setTag(viewHolder);
+
+<<<<<<< HEAD
             Picasso.with(convertView.getContext())
                     .load(imageUrl)
                     .fit().centerCrop()
@@ -154,6 +173,42 @@ public class HomeActivity extends BaseActivity {
                         }
                     });
 
+=======
+            } else {
+
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            final String imageUrl = "http://tbremer.pf-control.de/walls/" + String.valueOf(i + 1) + ".png";
+//            convertView.setTag(imageUrl);
+
+            viewHolder.text.setText(getItem(i).toString());
+
+
+            Picasso.with(convertView.getContext())
+                .load(imageUrl)
+                .fit().centerCrop()
+                .into(viewHolder.image, new Callback.EmptyCallback() {
+                    @Override public void onSuccess() {
+                        final Bitmap bitmap = ((BitmapDrawable) viewHolder.image.getDrawable()).getBitmap();// Ew!
+                        Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
+                            public void onGenerated(Palette palette) {
+
+                                if (palette != null) {
+
+                                    Palette.Swatch vibrantSwatch = palette.getVibrantSwatch();
+
+                                    if (vibrantSwatch != null) {
+                                        viewHolder.view.setBackgroundColor(vibrantSwatch.getRgb());
+                                        viewHolder.text.setTextColor(vibrantSwatch.getTitleTextColor());
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+
+>>>>>>> master
             return convertView;
         }
     }
