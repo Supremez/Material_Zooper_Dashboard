@@ -54,7 +54,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
-        <ImageView
+        <View
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:id="@+id/view"
